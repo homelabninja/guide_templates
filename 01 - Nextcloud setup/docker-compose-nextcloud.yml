@@ -51,9 +51,9 @@ services:
       - MYSQL_DATABASE=nextcloud_sql_db
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=nextcloud-db
-      - NEXTCLOUD_ADMIN_USER=fahad
-      - NEXTCLOUD_ADMIN_PASSWORD=Wrotreri@123
-      - NEXTCLOUD_TRUSTED_DOMAINS=www.nextclous.siliconmonde.com nextcloud.siliconmonde.com https://nextcloud.siliconmonde.com
+      - NEXTCLOUD_ADMIN_USER=<NC_USERNAME>
+      - NEXTCLOUD_ADMIN_PASSWORD=<YOUR_SECRET_PASSWORD>
+      - NEXTCLOUD_TRUSTED_DOMAINS=www.nextcloud.<yourdomain>.com nextcloud.<yourdomain>.com https://nextcloud.<yourdomain>.com
       - OVERWRITEPROTOCOL=https
     ports:
       - 1080:1080
@@ -63,7 +63,7 @@ services:
     depends_on:
       - nextcloud-db
     labels:
-      caddy: nextcloud.siliconmonde.com
+      caddy: nextcloud.<yourdomain>.com
       caddy.reverse_proxy: "{{upstreams 1080}}"  
 
   nextcloud-db:
