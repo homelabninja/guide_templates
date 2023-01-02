@@ -1,0 +1,78 @@
+version: "3.7"
+
+
+######################################
+# create an external network
+networks:
+  nc-network:
+    external: true
+
+
+volumes:
+  nextcloud-apache2:
+  nextcloud-data:
+  nextcloud-config:
+  nextcloud-db:
+  caddy-data:
+
+
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy
+    container_name: caddy_proxy
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CADDY_INGRESS_NETWORKS=nc-network
+    networks:
+      - nc-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - caddy-data:/data
+    restart: unless-stopped
+
+  nextcloud-db:
+    image: mariadb
+    restart: unless-stopped
+    container_name: mariadb-nxtcloud
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - nextcloud-db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_PASSWORD=sql_password
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    networks:
+      - nc-network
+
+  nextcloud-app:
+    image: nextcloud
+    container_name: nextcloud
+    restart: unless-stopped
+    volumes:
+      - nextcloud-data:/var/www/html
+      - nextcloud-apache2:/etc/apache2
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nextcloud-config:/config
+    environment:
+      - MYSQL_PASSWORD=sql_password
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=nextcloud-db
+      - NEXTCLOUD_ADMIN_USER=nc_admin
+      - NEXTCLOUD_ADMIN_PASSWORD=nc_admin
+      - NEXTCLOUD_TRUSTED_DOMAINS=www.nextcloud.siliconmonde.com nextcloud.siliconmonde.com https://nextcloud.siliconmonde.com
+      - OVERWRITEPROTOCOL=https
+    ports:
+      - 1080:1080
+      - 1443:1443
+    networks:
+      - nc-network
+      
+    depends_on:
+      - nextcloud-db
+    labels:
+      caddy: nextcloud.siliconmonde.com
+      caddy.reverse_proxy: "{{upstreams 1080}}"  
