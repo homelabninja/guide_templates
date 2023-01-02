@@ -24,6 +24,24 @@ Creat a docker network
 docker network create nc-network
 ```
 
+create a yml file
+
+edit the parameters according to your domain and remember to chage the default passwords
+
+
+run the following command to start docker containers
+
+```bash
+docker-compose -f docker-compose.yml up -d
+``` 
+
+if the server is not running update the apache 2 ports to match 1080 and 1443.
+
+run the docker-compose again
+
+
+also point the domain to your local ip address and make sure that in your local router settings port 80 and 443 are proxied to the server running the docker container. 
+
 
 
 
