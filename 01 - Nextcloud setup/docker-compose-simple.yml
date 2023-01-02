@@ -1,6 +1,7 @@
 version: "3.7"
 
-
+# Docker Compose file for running a Nextcloud instance with a MariaDB database,
+# a reverse proxy service provided by Caddy, and a shared network named "nc-network"
 ######################################
 # create an external network
 networks:
