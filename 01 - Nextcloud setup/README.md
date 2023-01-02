@@ -16,8 +16,19 @@ The nextcloud-db service runs the mariadb image and creates a MariaDB instance w
 
 The nextcloud-app service runs the nextcloud image and connects to the MariaDB instance using the specified environment variables. It also exposes ports 1080 and 1443 on the host machine and mounts several volumes. It depends on the nextcloud-db service and includes a caddy label.
 
+# setup
+
+Creat a docker network
+
+```bash
+docker network create nc-network
+```
+
+
+
 
 ## docker compose
 
  Docker Compose file for running a Nextcloud instance with a MariaDB database,
  a reverse proxy service provided by Caddy, and a shared network named "nc-network"
+
